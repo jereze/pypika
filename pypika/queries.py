@@ -204,7 +204,7 @@ class Table(Selectable):
     def __hash__(self) -> int:
         return hash(str(self))
 
-    def select(self, *terms: Sequence[Union[int, float, str, bool, Term, Field]]) -> "QueryBuilder":
+    def select(self, *terms: Union[int, float, str, bool, Term, Field]) -> "QueryBuilder":
         """
         Perform a SELECT operation on the current table
 
@@ -1352,7 +1352,7 @@ class QueryBuilder(Selectable, Term):
         if self._orderbys:
             querystring += self._orderby_sql(**kwargs)
 
-        querystring = self._apply_pagination(querystring)
+        querystring = self._apply_pagination(querystring, **kwargs)
 
         if self._for_update:
             querystring += self._for_update_sql(**kwargs)
@@ -1368,7 +1368,7 @@ class QueryBuilder(Selectable, Term):
 
         return querystring
 
-    def _apply_pagination(self, querystring: str) -> str:
+    def _apply_pagination(self, querystring: str, **kwargs) -> str:
         if self._limit is not None:
             querystring += self._limit_sql()
 
